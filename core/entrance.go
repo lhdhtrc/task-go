@@ -80,3 +80,11 @@ func (s *TaskCoreEntity) Stop() {
 func (s *TaskCoreEntity) RoutineCount() int32 {
 	return s.routineCount
 }
+
+func (s *TaskCoreEntity) AwaitTask() {
+	for {
+		if len(s.queue) == 0 {
+			break
+		}
+	}
+}
