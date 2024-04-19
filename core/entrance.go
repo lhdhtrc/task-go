@@ -81,9 +81,10 @@ func (s *TaskCoreEntity) RoutineCount() int32 {
 	return s.routineCount
 }
 
-func (s *TaskCoreEntity) Await() {
+func (s *TaskCoreEntity) Await(second int) {
 	for {
 		if len(s.queue) == 0 {
+			time.Sleep(time.Second * time.Duration(second))
 			break
 		}
 	}
