@@ -1,4 +1,4 @@
-package core
+package task
 
 import (
 	"sync/atomic"
@@ -6,7 +6,7 @@ import (
 )
 
 // monitorQueue 监控任务队列长度并动态调整worker数量
-func (s *TaskCoreEntity) monitorTask() {
+func (s *CoreEntity) monitorTask() {
 	ticker := time.NewTicker(time.Second) // 每秒检查一次任务队列长度并调整worker数量
 	defer ticker.Stop()
 
@@ -26,7 +26,7 @@ func (s *TaskCoreEntity) monitorTask() {
 	}
 }
 
-func (s *TaskCoreEntity) addRoutine() {
+func (s *CoreEntity) addRoutine() {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -45,7 +45,7 @@ func (s *TaskCoreEntity) addRoutine() {
 	}
 }
 
-func (s *TaskCoreEntity) removeRoutine() {
+func (s *CoreEntity) removeRoutine() {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -65,7 +65,7 @@ func (s *TaskCoreEntity) removeRoutine() {
 	}
 }
 
-func (s *TaskCoreEntity) routine() {
+func (s *CoreEntity) routine() {
 	defer atomic.AddInt32(&s.routineCount, -1) // 无论任务是否完成，routine退出时都减少计数
 
 	for {
