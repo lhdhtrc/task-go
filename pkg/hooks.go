@@ -2,19 +2,19 @@ package task
 
 import "time"
 
-func (s *CoreEntity) WithAddTaskSuccess(handle func(id string)) {
-	s.withAddTaskSuccess = handle
+func (core *CoreEntity) WithAddTaskSuccess(handle func(id string)) {
+	core.withAddTaskSuccess = handle
 }
-func (s *CoreEntity) WithAddTaskError(handle func(err error)) {
-	s.withAddTaskError = handle
+func (core *CoreEntity) WithAddTaskError(handle func(err error)) {
+	core.withAddTaskError = handle
 }
-func (s *CoreEntity) WithRunTask(handle func(id string, et time.Duration, err error)) {
-	s.withRunTask = handle
+func (core *CoreEntity) WithRunTask(handle func(id string, et time.Duration, err error)) {
+	core.withRunTask = handle
 }
 
-func (s *CoreEntity) WithAddRoutine(handle func()) {
-	s.withAddRoutine = handle
+func (core *CoreEntity) WithAddRoutine(handle func()) {
+	core.withAddRoutine = handle
 }
-func (s *CoreEntity) WithRemoveRoutine(handle func()) {
-	s.withRemoveRoutine = handle
+func (core *CoreEntity) WithRemoveRoutine(handle func()) {
+	core.withRemoveRoutine = handle
 }
