@@ -36,9 +36,6 @@ func (core *CoreEntity) monitorRoutine() {
 }
 
 func (core *CoreEntity) addRoutine() {
-	core.mu.Lock()
-	defer core.mu.Unlock()
-
 	if atomic.LoadInt32(&core.routineCount) >= core.MaxConcurrency {
 		// 如果routine数量已经达到最大值，则不添加
 		return
@@ -46,7 +43,7 @@ func (core *CoreEntity) addRoutine() {
 
 	// 增加routine计数，然后启动routine
 	atomic.AddInt32(&core.routineCount, 1)
-	core.wg.Add(1)
+	core.rwg.Add(1)
 	go core.routine()
 
 	if core.withAddRoutine != nil {
@@ -55,9 +52,6 @@ func (core *CoreEntity) addRoutine() {
 }
 
 func (core *CoreEntity) removeRoutine() {
-	core.mu.Lock()
-	defer core.mu.Unlock()
-
 	if atomic.LoadInt32(&core.routineCount) <= core.MinConcurrency {
 		// 如果routine数量已经达到最小值，则不移除
 		return
