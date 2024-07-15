@@ -18,8 +18,8 @@ type CoreEntity struct {
 	ctx    context.Context
 	cancel context.CancelFunc
 
-	queue chan RawEntity // 任务队列
-	stop  chan int       // 用于通知routine停止的信号chan
+	queue chan *RawEntity // 任务队列
+	stop  chan int        // 用于通知routine停止的信号chan
 
 	routineCount int32 // 使用原子操作来更新worker数量
 
