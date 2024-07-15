@@ -1,6 +1,12 @@
 ## Task Go
 A minimalist task scheduler.
 
+### How to use it?
+`go get github.com/lhdhtrc/task-go`
+```go
+
+```
+
 ### Example
 ``` go
 package main
