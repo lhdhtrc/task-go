@@ -26,6 +26,7 @@ func New(config ConfigEntity) *CoreEntity {
 func (core *CoreEntity) Add(task RawEntity) {
 	select {
 	case core.queue <- task:
+		core.twg.Add(1)
 		// 任务成功提交到队列
 		if core.withAddTaskSuccess != nil {
 			core.withAddTaskSuccess(task.Id)
