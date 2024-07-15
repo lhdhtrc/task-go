@@ -23,17 +23,17 @@ type CoreEntity struct {
 
 	routineCount int32 // 使用原子操作来更新worker数量
 
-	wg sync.WaitGroup
-	mu sync.Mutex // 用于保护routines数量检查时的竞态关系
+	twg sync.WaitGroup // task任务异步函数
+	rwg sync.WaitGroup
 
 	withAddTaskSuccess func(id string)
 	withAddTaskError   func(err error)
-	withRunTask        func(id string, et time.Duration, err error)
+	withRunTask        func(id string, et time.Duration)
 	withAddRoutine     func()
 	withRemoveRoutine  func()
 }
 
 type RawEntity struct {
 	Id     string
-	Handle func() error
+	Handle func()
 }
