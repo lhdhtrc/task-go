@@ -8,7 +8,7 @@ func (core *CoreEntity) WithAddTaskSuccess(handle func(id string)) {
 func (core *CoreEntity) WithAddTaskError(handle func(err error)) {
 	core.withAddTaskError = handle
 }
-func (core *CoreEntity) WithRunTask(handle func(id string, et time.Duration, err error)) {
+func (core *CoreEntity) WithRunTask(handle func(id string, et time.Duration)) {
 	core.withRunTask = handle
 }
 
