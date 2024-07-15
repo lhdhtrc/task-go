@@ -82,12 +82,13 @@ func (core *CoreEntity) routine() {
 		case task := <-core.queue:
 			// 执行任务
 			st := time.Now()
-			te := task.Handle()
+			task.Handle()
 			et := time.Now()
 			dt := et.Sub(st)
 			if core.withRunTask != nil {
-				core.withRunTask(task.Id, dt, te)
+				core.withRunTask(task.Id, dt)
 			}
+			core.twg.Done()
 		case <-core.stop:
 			// 收到信号，routine终止
 			return
