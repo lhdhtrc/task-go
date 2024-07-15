@@ -43,7 +43,6 @@ func (core *CoreEntity) addRoutine() {
 
 	// 增加routine计数，然后启动routine
 	atomic.AddInt32(&core.routineCount, 1)
-	core.rwg.Add(1)
 	go core.routine()
 
 	if core.withAddRoutine != nil {

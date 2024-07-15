@@ -56,7 +56,6 @@ func (core *CoreEntity) Uninstall() {
 
 	core.cancel()     // 取消上下文，通知所有routine停止工作
 	close(core.stop)  // 发送信号到所有routine
-	core.rwg.Wait()   // 等待所有routine退出
 	close(core.queue) // 关闭任务队列
 
 	fmt.Println("uninstall task success")

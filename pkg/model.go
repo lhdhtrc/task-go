@@ -24,7 +24,6 @@ type CoreEntity struct {
 	routineCount int32 // 使用原子操作来更新worker数量
 
 	twg sync.WaitGroup // task任务异步函数
-	rwg sync.WaitGroup
 
 	withAddTaskSuccess func(id string)
 	withAddTaskError   func(err error)
