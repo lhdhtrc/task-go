@@ -3,6 +3,7 @@ package task
 import (
 	"context"
 	"errors"
+	"fmt"
 )
 
 func New(config ConfigEntity) *CoreEntity {
@@ -51,8 +52,12 @@ func (core *CoreEntity) RoutineCount() int32 {
 }
 
 func (core *CoreEntity) Uninstall() {
+	core.twg.Wait() // 等待所有任务执行完成
+
 	core.cancel()     // 取消上下文，通知所有routine停止工作
 	close(core.stop)  // 发送信号到所有routine
-	core.wg.Wait()    // 等待所有routine退出
+	core.rwg.Wait()   // 等待所有routine退出
 	close(core.queue) // 关闭任务队列
+
+	fmt.Println("uninstall task success")
 }
