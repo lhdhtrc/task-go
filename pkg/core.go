@@ -6,13 +6,13 @@ import (
 	"fmt"
 )
 
-func New(config ConfigEntity) *CoreEntity {
+func New(config *ConfigEntity) *CoreEntity {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	core := &CoreEntity{
-		ConfigEntity: config,
+		ConfigEntity: *config,
 
-		queue:  make(chan RawEntity, config.MaxCache),
+		queue:  make(chan *RawEntity, config.MaxCache),
 		stop:   make(chan int),
 		ctx:    ctx,
 		cancel: cancel,
@@ -23,7 +23,7 @@ func New(config ConfigEntity) *CoreEntity {
 	return core
 }
 
-func (core *CoreEntity) Add(task RawEntity) {
+func (core *CoreEntity) Add(task *RawEntity) {
 	select {
 	case core.queue <- task:
 		core.twg.Add(1)
