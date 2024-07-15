@@ -38,13 +38,8 @@ func (core *CoreEntity) Add(task RawEntity) {
 	}
 }
 
-func (core *CoreEntity) Await(second int64) {
-	for {
-		if len(core.queue) == 0 {
-			time.Sleep(time.Duration(second) * time.Second)
-			break
-		}
-	}
+func (core *CoreEntity) Await() {
+	core.twg.Wait()
 }
 
 func (core *CoreEntity) Count() int {
