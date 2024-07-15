@@ -17,6 +17,18 @@ func New(config *ConfigEntity) *CoreEntity {
 		ctx:    ctx,
 		cancel: cancel,
 	}
+	if core.ConfigEntity.MaxCache == 0 {
+		core.ConfigEntity.MaxCache = 1000
+	}
+	if core.ConfigEntity.MaxConcurrency == 0 {
+		core.ConfigEntity.MaxCache = 5
+	}
+	if core.ConfigEntity.MinConcurrency == 0 {
+		core.ConfigEntity.MaxCache = 1
+	}
+	if core.ConfigEntity.MonitorTime == 0 {
+		core.ConfigEntity.MonitorTime = 100
+	}
 
 	core.install()
 
