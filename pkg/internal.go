@@ -16,7 +16,7 @@ func (core *CoreEntity) install() {
 
 // monitorQueue 监控任务队列长度并动态调整worker数量
 func (core *CoreEntity) monitorRoutine() {
-	ticker := time.NewTicker(time.Second) // 每秒检查一次任务队列长度并调整worker数量
+	ticker := time.NewTicker(time.Duration(core.MonitorTime) * time.Millisecond) // 每秒检查一次任务队列长度并调整worker数量
 	defer ticker.Stop()
 
 	for {
