@@ -4,60 +4,44 @@ A minimalist task scheduler.
 ### How to use it?
 `go get github.com/lhdhtrc/task-go`
 ```go
-
-```
-
-### Example
-``` go
 package main
 
 import (
 	"fmt"
-	"github.com/lhdhtrc/task-go/core"
-	"github.com/lhdhtrc/task-go/model"
-	"go.uber.org/zap"
+	task "github.com/lhdhtrc/task-go/pkg"
 	"time"
 )
 
 func main() {
-	logger, _ := zap.NewDevelopment()
-	timeFormat := "2006-01-02 15:04:05"
-
-	task := core.New(model.ConfigEntity{
-		MaxCache:       1000000,
-		MaxConcurrency: 10,
-		MinConcurrency: 3,
-	})
-	task.WithAddTaskSuccess(func(id string) {
-		now := time.Now()
-		var field []zap.Field
-		field = append(field, zap.String("TaskId", id))
-		field = append(field, zap.String("AddDate", now.Format(timeFormat)))
-		logger.Info("Task Add Success", field...)
-	})
-	task.WithRunTask(func(id string, et time.Duration, err error) {
-		now := time.Now()
-		var field []zap.Field
-		field = append(field, zap.String("TaskId", id))
-		field = append(field, zap.String("RunDate", now.Format(timeFormat)))
-		field = append(field, zap.String("TimeConsuming", fmt.Sprintf("%v", et)))
-		logger.Info("Task Run Success", field...)
-	})
-	task.Setup()
-
-	for i := 0; i < 10; i++ {
-		jobID := i
-		task.Add(core.TaskEntity{
-			Id: fmt.Sprintf("TestTask_%d", jobID),
-			Handle: func() error {
-				fmt.Printf("Starting job %d\n", jobID)
-				time.Sleep(time.Second) // 模拟耗时任务
-				fmt.Printf("Finished job %d\n", jobID)
-				return nil
-			},
-		})
-	}
-
-	time.Sleep(5 * time.Second)
+    instance := task.New(&task.ConfigEntity{
+        MaxCache:       1000000, // Set a buffer large enough for your business needs, because if you Add more data at once, the task will be discarded
+        MaxConcurrency: 50,
+        MinConcurrency: 1,
+    })
+    instance.WithRunTask(func(id string, et time.Duration) {
+        fmt.Printf("%s success, run time %s\n", id, et)
+        fmt.Println(instance.RoutineCount())
+    })
+    instance.WithAddTaskError(func(err error) {
+        fmt.Println(err.Error())
+    })
+    
+    // How to add a task to a Task queue (asynchronous)?
+    for i := 0; i < instance.MaxCache; i++ {
+        instance.Add(&task.RawEntity{
+            Id:     fmt.Sprintf("%s_%d", "task", i+1),
+            Handle: TaskHandle,
+        })
+    }
+    
+    // How do I wait for an asynchronous task to finish
+    instance.Await()
+    
+    // Note that at the end of the process, please reclaim your lease!
+    instance.Uninstall()
 }
 ```
+
+### Finally
+- If you feel good, click on star.
+- If you have a good suggestion, please ask the issue.
