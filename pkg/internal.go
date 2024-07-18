@@ -1,4 +1,4 @@
-package task
+package tpg
 
 import (
 	"sync/atomic"

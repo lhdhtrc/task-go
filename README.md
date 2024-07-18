@@ -8,12 +8,12 @@ package main
 
 import (
 	"fmt"
-	task "github.com/lhdhtrc/task-go/pkg"
+	tpg "github.com/lhdhtrc/task-go/pkg"
 	"time"
 )
 
 func main() {
-    instance := task.New(&task.ConfigEntity{
+    instance := task.New(&tpg.ConfigEntity{
         MaxCache:       1000000, // Set a buffer large enough for your business needs, because if you Add more data at once, the task will be discarded
         MaxConcurrency: 50,
         MinConcurrency: 1,
@@ -28,7 +28,7 @@ func main() {
     
     // How to add a task to a Task queue (asynchronous)?
     for i := 0; i < instance.MaxCache; i++ {
-        instance.Add(&task.RawEntity{
+        instance.Add(&tpg.RawEntity{
             Id:     fmt.Sprintf("%s_%d", "task", i+1),
             Handle: TaskHandle,
         })
