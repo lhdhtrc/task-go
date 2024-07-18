@@ -39,6 +39,7 @@ func (core *CoreEntity) InitCert(dir string, config interface{}) {
 		}
 	}
 }
+
 func (core *CoreEntity) InitConfig(source []string, config []interface{}) {
 	for i, it := range source {
 		core.Add(&RawEntity{
