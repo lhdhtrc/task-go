@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-    instance := task.New(&tpg.ConfigEntity{
+    instance := tpg.New(&tpg.ConfigEntity{
         MaxCache:       1000000, // Set a buffer large enough for your business needs, because if you Add more data at once, the task will be discarded
         MaxConcurrency: 50,
         MinConcurrency: 1,
