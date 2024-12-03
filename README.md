@@ -13,11 +13,13 @@ import (
 )
 
 func main() {
-    instance := task.New(&task.ConfigEntity{
-        MaxCache:       1000000, // Set a buffer large enough for your business needs, because if you Add more data at once, the task will be discarded
-        MaxConcurrency: 50,
-        MinConcurrency: 1,
-    })
+	config := &task.Config{
+		MaxCache:       1000000, // Set a buffer large enough for your business needs, because if you Add more data at once, the task will be discarded
+		MaxConcurrency: 50,
+		MinConcurrency: 1,
+	}
+	
+    instance := task.New(config)
     instance.WithRunTask(func(id string, et time.Duration) {
         fmt.Printf("%s success, run time %s\n", id, et)
         fmt.Println(instance.RoutineCount())
@@ -27,7 +29,7 @@ func main() {
     })
     
     // How to add a task to a Task queue (asynchronous)?
-    for i := 0; i < instance.MaxCache; i++ {
+    for i := 0; i < config.MaxCache; i++ {
         instance.Add(&task.RawEntity{
             Id:     fmt.Sprintf("%s_%d", "task", i+1),
             Handle: TaskHandle,

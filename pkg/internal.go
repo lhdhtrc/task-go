@@ -5,9 +5,9 @@ import (
 	"time"
 )
 
-func (core *CoreEntity) install() {
+func (core *Instance) install() {
 	// 启动初始数量的routine
-	for i := int32(0); i < core.MinConcurrency; i++ {
+	for i := int32(0); i < core.config.MinConcurrency; i++ {
 		core.addRoutine()
 	}
 
@@ -15,8 +15,8 @@ func (core *CoreEntity) install() {
 }
 
 // monitorQueue 监控任务队列长度并动态调整worker数量
-func (core *CoreEntity) monitorRoutine() {
-	ticker := time.NewTicker(time.Duration(core.MonitorTime) * time.Millisecond) // 每秒检查一次任务队列长度并调整worker数量
+func (core *Instance) monitorRoutine() {
+	ticker := time.NewTicker(time.Duration(core.config.MonitorTime) * time.Millisecond) // 每秒检查一次任务队列长度并调整worker数量
 	defer ticker.Stop()
 
 	for {
@@ -26,7 +26,7 @@ func (core *CoreEntity) monitorRoutine() {
 		case <-ticker.C:
 			l := len(core.queue)
 			i := atomic.LoadInt32(&core.routineCount) - int32(l)
-			if l > 0 && i < core.MaxConcurrency-core.MinConcurrency {
+			if l > 0 && i < core.config.MaxConcurrency-core.config.MinConcurrency {
 				core.addRoutine()
 			} else if i > 0 {
 				core.removeRoutine()
@@ -35,8 +35,8 @@ func (core *CoreEntity) monitorRoutine() {
 	}
 }
 
-func (core *CoreEntity) addRoutine() {
-	if atomic.LoadInt32(&core.routineCount) >= core.MaxConcurrency {
+func (core *Instance) addRoutine() {
+	if atomic.LoadInt32(&core.routineCount) >= core.config.MaxConcurrency {
 		// 如果routine数量已经达到最大值，则不添加
 		return
 	}
@@ -50,8 +50,8 @@ func (core *CoreEntity) addRoutine() {
 	}
 }
 
-func (core *CoreEntity) removeRoutine() {
-	if atomic.LoadInt32(&core.routineCount) <= core.MinConcurrency {
+func (core *Instance) removeRoutine() {
+	if atomic.LoadInt32(&core.routineCount) <= core.config.MinConcurrency {
 		// 如果routine数量已经达到最小值，则不移除
 		return
 	}
@@ -67,7 +67,7 @@ func (core *CoreEntity) removeRoutine() {
 	}
 }
 
-func (core *CoreEntity) routine() {
+func (core *Instance) routine() {
 	defer atomic.AddInt32(&core.routineCount, -1) // 无论任务是否完成，routine退出时都减少计数
 
 	for {

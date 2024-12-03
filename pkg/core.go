@@ -6,28 +6,28 @@ import (
 	"fmt"
 )
 
-func New(config *ConfigEntity) *CoreEntity {
+func New(config *Config) *Instance {
 	ctx, cancel := context.WithCancel(context.Background())
 
-	core := &CoreEntity{
-		ConfigEntity: *config,
-
-		queue:  make(chan *RawEntity, config.MaxCache),
-		stop:   make(chan int),
+	core := &Instance{
 		ctx:    ctx,
 		cancel: cancel,
+		config: config,
+
+		queue: make(chan *Raw, config.MaxCache),
+		stop:  make(chan int),
 	}
-	if core.ConfigEntity.MaxCache == 0 {
-		core.ConfigEntity.MaxCache = 1000
+	if core.config.MaxCache == 0 {
+		core.config.MaxCache = 1000
 	}
-	if core.ConfigEntity.MaxConcurrency == 0 {
-		core.ConfigEntity.MaxCache = 5
+	if core.config.MaxConcurrency == 0 {
+		core.config.MaxCache = 5
 	}
-	if core.ConfigEntity.MinConcurrency == 0 {
-		core.ConfigEntity.MaxCache = 1
+	if core.config.MinConcurrency == 0 {
+		core.config.MaxCache = 1
 	}
-	if core.ConfigEntity.MonitorTime == 0 {
-		core.ConfigEntity.MonitorTime = 100
+	if core.config.MonitorTime == 0 {
+		core.config.MonitorTime = 100
 	}
 
 	core.install()
@@ -35,7 +35,7 @@ func New(config *ConfigEntity) *CoreEntity {
 	return core
 }
 
-func (core *CoreEntity) Add(task *RawEntity) {
+func (core *Instance) Add(task *Raw) {
 	select {
 	case core.queue <- task:
 		core.twg.Add(1)
@@ -51,19 +51,19 @@ func (core *CoreEntity) Add(task *RawEntity) {
 	}
 }
 
-func (core *CoreEntity) Await() {
+func (core *Instance) Await() {
 	core.twg.Wait()
 }
 
-func (core *CoreEntity) Count() int {
+func (core *Instance) Count() int {
 	return len(core.queue)
 }
 
-func (core *CoreEntity) RoutineCount() int32 {
+func (core *Instance) RoutineCount() int32 {
 	return core.routineCount
 }
 
-func (core *CoreEntity) Uninstall() {
+func (core *Instance) Uninstall() {
 	core.twg.Wait() // 等待所有任务执行完成
 
 	core.cancel()     // 取消上下文，通知所有routine停止工作
